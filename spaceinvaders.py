@@ -4,6 +4,7 @@
 # Created by Lee Robinson
 
 from pygame import *
+import pygame
 import sys
 from os.path import abspath, dirname
 from random import choice
