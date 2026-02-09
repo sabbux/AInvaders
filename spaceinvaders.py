@@ -14,7 +14,7 @@ from os.path import abspath, dirname
 from random import choice, randint
 
 # --- CONFIGURAZIONE ---
-BASE_PATH = abspath(dirname(_file_))
+BASE_PATH = abspath(dirname(__file__))
 FONT_PATH = BASE_PATH + '/fonts/'
 IMAGE_PATH = BASE_PATH + '/images/'
 SOUND_PATH = BASE_PATH + '/sounds/'
@@ -58,8 +58,8 @@ ENEMY_MOVE_DOWN = 35
 # --- CLASSI SPRITE (Entità del gioco) ---
 
 class Ship(pygame.sprite.Sprite):
-    def _init_(self):
-        pygame.sprite.Sprite._init_(self)
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
         self.image = IMAGES['ship']
         self.rect = self.image.get_rect(topleft=(375, 540))
         self.speed = 5
@@ -68,8 +68,8 @@ class Ship(pygame.sprite.Sprite):
         SCREEN.blit(self.image, self.rect)
 
 class Life(pygame.sprite.Sprite):
-    def _init_(self, xpos, ypos):
-        pygame.sprite.Sprite._init_(self)
+    def __init__(self, xpos, ypos):
+        pygame.sprite.Sprite.__init__(self)
         self.image = IMAGES['ship']
         self.image = pygame.transform.scale(self.image, (23, 23))
         self.rect = self.image.get_rect(topleft=(xpos, ypos))
@@ -78,8 +78,8 @@ class Life(pygame.sprite.Sprite):
         pass
 
 class Bullet(pygame.sprite.Sprite):
-    def _init_(self, xpos, ypos, direction, speed, filename, side):
-        pygame.sprite.Sprite._init_(self)
+    def __init__(self, xpos, ypos, direction, speed, filename, side):
+        pygame.sprite.Sprite.__init__(self)
         self.image = IMAGES[filename]
         self.rect = self.image.get_rect(topleft=(xpos, ypos))
         self.speed = speed
@@ -92,8 +92,8 @@ class Bullet(pygame.sprite.Sprite):
 
 
 class Enemy(pygame.sprite.Sprite):
-    def _init_(self, row, column):
-        pygame.sprite.Sprite._init_(self)
+    def __init__(self, row, column):
+        pygame.sprite.Sprite.__init__(self)
         self.row = row
         self.column = column
         self.images = []
@@ -119,8 +119,8 @@ class Enemy(pygame.sprite.Sprite):
         self.images.append(pygame.transform.scale(img2, (40, 35)))
 
 class EnemiesGroup(pygame.sprite.Group):
-    def _init_(self, columns, rows, enemyPosition):
-        pygame.sprite.Group._init_(self)
+    def __init__(self, columns, rows, enemyPosition):
+        pygame.sprite.Group.__init__(self)
         self.enemies = [[None] * columns for _ in range(rows)]
         self.columns = columns
         self.rows = rows
@@ -202,8 +202,8 @@ class EnemiesGroup(pygame.sprite.Group):
                 is_column_dead = self.is_column_dead(self._leftAliveColumn)
 
 class Blocker(pygame.sprite.Sprite):
-    def _init_(self, size, color, row, column):
-        pygame.sprite.Sprite._init_(self)
+    def __init__(self, size, color, row, column):
+        pygame.sprite.Sprite.__init__(self)
         self.height = size
         self.width = size
         self.color = color
@@ -217,8 +217,8 @@ class Blocker(pygame.sprite.Sprite):
         pass
 
 class Mystery(pygame.sprite.Sprite):
-    def _init_(self):
-        pygame.sprite.Sprite._init_(self)
+    def __init__(self):
+        pygame.sprite.Sprite.__init__(self)
         self.image = IMAGES['mystery']
         self.image = pygame.transform.scale(self.image, (75, 35))
         self.rect = self.image.get_rect(topleft=(-80, 45))
@@ -256,8 +256,8 @@ class Mystery(pygame.sprite.Sprite):
             self.timer = currentTime
 
 class EnemyExplosion(pygame.sprite.Sprite):
-    def _init_(self, enemy, *groups):
-        super(EnemyExplosion, self)._init_(*groups)
+    def __init__(self, enemy, *groups):
+        super(EnemyExplosion, self).__init__(*groups)
         self.image = pygame.transform.scale(self.get_image(enemy.row), (40, 35))
         self.image2 = pygame.transform.scale(self.get_image(enemy.row), (50, 45))
         self.rect = self.image.get_rect(topleft=(enemy.rect.x, enemy.rect.y))
@@ -278,7 +278,7 @@ class EnemyExplosion(pygame.sprite.Sprite):
             self.kill()
 
 class Text(object):
-    def _init_(self, textFont, size, message, color, xpos, ypos):
+    def __init__(self, textFont, size, message, color, xpos, ypos):
         self.font = pygame.font.Font(textFont, size)
         self.surface = self.font.render(message, True, color)
         self.rect = self.surface.get_rect(topleft=(xpos, ypos))
@@ -289,7 +289,7 @@ class Text(object):
 # --- AMBIENTE DI GIOCO PER AI ---
 
 class SpaceInvadersEnvironment(object):
-    def _init_(self, collect_data=False):
+    def __init__(self, collect_data=False):
         pygame.mixer.pre_init(44100, -16, 1, 4096)
         pygame.init()
         self.clock = pygame.time.Clock()
@@ -299,6 +299,10 @@ class SpaceInvadersEnvironment(object):
         self.score = 0
         self.collect_data = collect_data
         self.simulated_time = pygame.time.get_ticks() # Sincronizza l'inizio
+
+        # --- ANTI CAMPING SYSTEM ---
+        self.last_x = 0
+        self.camping_frames = 0
 
         self.create_audio()
 
@@ -429,7 +433,7 @@ class SpaceInvadersEnvironment(object):
             for row in self.enemies.enemies:
                 for enemy in row:
                     if enemy:
-                        d = math.sqrt((self.player.rect.x - enemy.rect.x)*2 + (self.player.rect.y - enemy.rect.y)*2)
+                        d = math.sqrt((self.player.rect.x - enemy.rect.x)**2 + (self.player.rect.y - enemy.rect.y)**2)
                         if d < min_dist:
                             min_dist = d
                             closest_e_x = enemy.rect.x / 800.0
@@ -443,7 +447,7 @@ class SpaceInvadersEnvironment(object):
         closest_b_x, closest_b_y = 0.0, 0.0
         min_b_dist = 9999
         for b in self.enemyBullets:
-            d = math.sqrt((self.player.rect.x - b.rect.x)*2 + (self.player.rect.y - b.rect.y)*2)
+            d = math.sqrt((self.player.rect.x - b.rect.x)**2 + (self.player.rect.y - b.rect.y)**2)
             if d < min_b_dist:
                 min_b_dist = d
                 closest_b_x = b.rect.x / 800.0
@@ -493,6 +497,31 @@ class SpaceInvadersEnvironment(object):
                 else:
                     reward -= 0.1 # Piccola penalità spam
 
+            # ====================================================
+            # >>> INIZIO INSERIMENTO CODICE ANTI-CAMPING <<<
+            # ====================================================
+            
+            # --- LOGICA ANTI-CAMPING (Patata Bollente) ---
+            # Controlla se la posizione X è quasi uguale a prima (tolleranza 2 pixel)
+            if abs(self.player.rect.x - self.last_x) < 2:
+                self.camping_frames += 1
+            else:
+                self.camping_frames = 0 # Si è mosso! Resetta.
+                
+            self.last_x = self.player.rect.x
+
+            # Se sta fermo per più di 120 frame (2 secondo) -> PENALITÀ
+            if self.camping_frames > 120:
+                reward -= 0.5 # Perde punti velocemente se campera
+                
+            # Se sta fermo ai BORDI (Muri) è ancora peggio (evita il glitch dell'angolo)
+            if (self.player.rect.x < 50 or self.player.rect.x > 700) and self.camping_frames > 30:
+                reward -= 1.0 # Penalità doppia per chi si nasconde negli angoli
+            
+            # ====================================================
+            # >>> FINE INSERIMENTO <<<
+            # ====================================================
+            
         # --- 2. FISICA DEL GIOCO ---
         self.play_main_music(current_time)
         self.enemies.update(current_time)
@@ -528,11 +557,11 @@ class SpaceInvadersEnvironment(object):
 
         # --- 3. GESTIONE COLLISIONI & REWARD ---
 
-        # A. Colpito Nemico (+10)
+        # A. Colpito Nemico (+30)
         hits = pygame.sprite.groupcollide(self.enemies, self.bullets, True, True)
         for enemy in hits:
             self.sounds['invaderkilled'].play()
-            reward += 10
+            reward += 30
             EnemyExplosion(enemy, self.explosionsGroup)
 
         # B. Colpito Mystery (+50)
@@ -541,10 +570,10 @@ class SpaceInvadersEnvironment(object):
             self.mysteryShip = Mystery() # Respawn mystery
             self.mysteryGroup.add(self.mysteryShip)
 
-        # C. Proiettile mancato (-1)
+       # C. Proiettile mancato
         for b in self.bullets:
             if b.rect.y < 0:
-                reward -= 1
+                reward -= 0.1  # <--- Quasi gratis. Incoraggia a sparare molto!
                 b.kill()
 
         # Pulizia Proiettili Nemici (Usciti dallo schermo in basso)
@@ -587,19 +616,19 @@ class SpaceInvadersEnvironment(object):
                 for bullet in self.bullets:
                     bullet.kill()
             else:
-                # DIE: Game Over (-100)
-                reward -= 100
+                # DIE: Game Over (-200)
+                reward -= 200
                 done = True
 
-        # E. Nemici toccano il fondo (-100)
+        # E. Nemici toccano il fondo (-200)
         if self.enemies.bottom >= 540:
-            reward -= 100
+            reward -= 200
             done = True
 
         # --- MODIFICA: VITTORIA LIVELLO (Progressione Infinita) ---
         if not self.enemies:
             # 1. PREMIO ENORME
-            reward += 50
+            reward += 100
 
             # 2. AUMENTA DIFFICOLTÀ
             self.level += 1
@@ -671,7 +700,7 @@ class SpaceInvadersEnvironment(object):
         return self.get_state(), reward, done
 
 # --- TEST DI FUNZIONAMENTO (Nessun Agente Reale) ---
-if _name_ == '_main_':
+if __name__ == '_main_':
     # Questo blocco serve solo a testare se l'ambiente non crasha
     env = SpaceInvadersEnvironment(collect_data=False)
 
