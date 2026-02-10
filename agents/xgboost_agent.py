@@ -85,7 +85,7 @@ def run_ai_player():
             # time.sleep(0.01) 
             
         print(f"Episodio {episode+1} terminato. Livello Raggiunto: {env.level} | Reward Totale: {int(total_reward)}")
-        print(f"Episodio {episode}: MORTO al Livello {env.level} | Score: {env.score}")
+        print(f"Episodio {episode+1}: MORTO al Livello {env.level} | Score: {env.score}")
         time.sleep(1) # Pausa tra una partita e l'altra
 
 if __name__ == "__main__":
