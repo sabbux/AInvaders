@@ -20,7 +20,7 @@ IMAGE_PATH = BASE_PATH + '/images/'
 SOUND_PATH = BASE_PATH + '/sounds/'
 
 # Configurazione Visualizzazione
-WATCH_MODE = False      # True: Vedi il gioco. False: Training veloce (schermo nero).
+WATCH_MODE = True     # True: Vedi il gioco. False: Training veloce (schermo nero).
 COLLECT_DATA = False   # Impostalo a True nel tuo script di training, non qui.
 
 # Costanti Colori
