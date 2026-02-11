@@ -42,7 +42,7 @@ def get_ai_action(state):
         'dir': state[6]
     }
     
-    # 2. FEATURE ENGINEERING (Usiamo lo stesso codice del training!)
+    # 2. FEATURE ENGINEERING
     processed_data = compute_features(raw_data)
     
     # 3. Ordiniamo i dati esattamente come vuole XGBoost
@@ -80,9 +80,6 @@ def run_ai_player():
             # 2. Esegui l'azione
             state, reward, done = env.step(action)
             total_reward += reward
-            
-            # (Opzionale) Rallenta se vuoi vedere meglio i movimenti
-            # time.sleep(0.01) 
             
         print(f"Episodio {episode+1} terminato. Livello Raggiunto: {env.level} | Reward Totale: {int(total_reward)}")
         print(f"Episodio {episode+1}: MORTO al Livello {env.level} | Score: {env.score}")

@@ -2,7 +2,7 @@ import sys
 import os
 import joblib
 import numpy as np
-import pandas as pd  # <--- AGGIUNTA FONDAMENTALE
+import pandas as pd  
 import time
 
 # Setup path
@@ -49,12 +49,11 @@ def run_mlp_agent():
             # 2. Calcola le features matematiche (Dizionario)
             features = compute_features(raw_data)
             
-            # 3. CREIAMO UN DATAFRAME (La correzione è qui!)
+            # 3. CREIAMO UN DATAFRAME
             # Creiamo un DataFrame con una sola riga, usando le chiavi del dizionario come colonne
             input_df = pd.DataFrame([features])
             
             # 4. Ordiniamo le colonne rigorosamente come nel training
-            # Questo fa felice lo Scaler ed elimina il Warning
             input_df = input_df[get_feature_names()]
             
             # 5. SCALING (Ora riceve un DataFrame con i nomi corretti)
@@ -65,9 +64,7 @@ def run_mlp_agent():
             
             state, reward, done = env.step(action)
             total_reward += reward
-            
-            # time.sleep(0.01) # Decommenta per rallentare
-            
+                        
         print(f"Episodio {ep+1} terminato - Score: {env.score} (Reward: {total_reward})")
         time.sleep(1)
 

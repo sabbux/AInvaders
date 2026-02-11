@@ -24,10 +24,8 @@ class HeuristicAgent:
         state = [p_x, my_bullet, e_x, e_y, b_x, b_y, dir]
         """
         
-        # ============================================================
-        # STRATEGIA 1: IL MAESTRO UBRIACO (Hardcore Version)
-        # ============================================================
-        # Ora il 33% delle volte (1 su 3) fa una mossa a caso.
+        
+        # Il 33% delle volte (1 su 3) fa una mossa a caso.
         # L'agente morirà molto spesso, ma genererà dati di "recupero estremo".
         if np.random.rand() < 0.33:
             return np.random.randint(0, 4)
@@ -44,7 +42,7 @@ class HeuristicAgent:
         DANGER_DIST = 0.1
         AIM_TOLERANCE = 0.02
 
-        # --- 1. MODULO SOPRAVVIVENZA (Priorità Assoluta) ---
+        # --- 1. MODULO SOPRAVVIVENZA ---
         if bullet_y > 0 and abs(player_x - bullet_x) < DANGER_DIST:
             if player_x > bullet_x:
                 if player_x < 0.95:
@@ -103,9 +101,7 @@ def run_data_collection():
                         should_save = False
 
                 if should_save:
-                    # ============================================================
-                    # STRATEGIA 2: UNDERSAMPLING AGGRESSIVO
-                    # ============================================================
+                    
                     # Scartiamo l'80% delle volte in cui sta fermo.
                     # Vogliamo un'IA che si muova sempre.
                     if action == 0 and np.random.rand() > 0.20: # Salviamo solo il 20% degli "0"

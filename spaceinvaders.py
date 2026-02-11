@@ -21,7 +21,7 @@ SOUND_PATH = BASE_PATH + '/sounds/'
 
 # Configurazione Visualizzazione
 WATCH_MODE = True     # True: Vedi il gioco. False: Training veloce (schermo nero).
-COLLECT_DATA = False   # Impostalo a True nel tuo script di training, non qui.
+COLLECT_DATA = False   
 
 # Costanti Colori
 WHITE = (255, 255, 255)
@@ -316,7 +316,6 @@ class SpaceInvadersEnvironment(object):
         self.reset()
 
     def create_audio(self):
-        # 1. Inizializza SEMPRE le variabili di tempo (servono alla logica di gioco)
         self.noteIndex = 0
         self.noteTimer = pygame.time.get_ticks()
 
@@ -332,7 +331,7 @@ class SpaceInvadersEnvironment(object):
             self.sounds = {name: DummySound() for name in ['shoot', 'shoot2', 'invaderkilled', 'mysterykilled', 'shipexplosion']}
             # Crea lista note finte
             self.musicNotes = [DummySound() for _ in range(4)]
-            return # Esce qui, ma ora noteTimer esiste già!
+            return 
 
         # 3. Se è Watch Mode (True), carica i suoni veri dal disco
         self.sounds = {}
@@ -439,7 +438,6 @@ class SpaceInvadersEnvironment(object):
                             closest_e_x = enemy.rect.x / 800.0
                             closest_e_y = enemy.rect.y / 600.0
 
-        # Aggiungiamo lo stato del NOSTRO proiettile
         # 1.0 se abbiamo un colpo in volo, 0.0 se siamo liberi di sparare
         my_bullet_active = 1.0 if len(self.bullets) > 0 else 0.0
 
@@ -497,11 +495,7 @@ class SpaceInvadersEnvironment(object):
                 else:
                     reward -= 0.1 # Piccola penalità spam
 
-            # ====================================================
-            # >>> INIZIO INSERIMENTO CODICE ANTI-CAMPING <<<
-            # ====================================================
-            
-            # --- LOGICA ANTI-CAMPING (Patata Bollente) ---
+            # LOGICA ANTI-CAMPING 
             # Controlla se la posizione X è quasi uguale a prima (tolleranza 2 pixel)
             if abs(self.player.rect.x - self.last_x) < 2:
                 self.camping_frames += 1
@@ -514,13 +508,9 @@ class SpaceInvadersEnvironment(object):
             if self.camping_frames > 120:
                 reward -= 0.5 # Perde punti velocemente se campera
                 
-            # Se sta fermo ai BORDI (Muri) è ancora peggio (evita il glitch dell'angolo)
+            # Se sta fermo ai BORDI (Muri) è ancora peggio 
             if (self.player.rect.x < 50 or self.player.rect.x > 700) and self.camping_frames > 30:
                 reward -= 1.0 # Penalità doppia per chi si nasconde negli angoli
-            
-            # ====================================================
-            # >>> FINE INSERIMENTO <<<
-            # ====================================================
             
         # --- 2. FISICA DEL GIOCO ---
         self.play_main_music(current_time)
@@ -531,7 +521,7 @@ class SpaceInvadersEnvironment(object):
         self.explosionsGroup.update(current_time)
         self.livesGroup.update()
 
-       # --- FUOCO NEMICO "PROGRESSIVE EVIL MODE" ---
+       # FUOCO NEMICO 
 
         # 1. Calcola quanti proiettili possono esserci a schermo in base al livello
         # Livello 1: 3 proiettili
@@ -573,7 +563,7 @@ class SpaceInvadersEnvironment(object):
        # C. Proiettile mancato
         for b in self.bullets:
             if b.rect.y < 0:
-                reward -= 0.1  # <--- Quasi gratis. Incoraggia a sparare molto!
+                reward -= 0.1  
                 b.kill()
 
         # Pulizia Proiettili Nemici (Usciti dallo schermo in basso)
@@ -582,7 +572,7 @@ class SpaceInvadersEnvironment(object):
                 b.kill()
 
         # Gestione Blocker (Muri):
-        # I proiettili (sia tuoi che nemici) distruggono i blocker e si distruggono a vicenda
+        # I proiettili distruggono i blocker
         pygame.sprite.groupcollide(self.bullets, self.allBlockers, True, True)
         pygame.sprite.groupcollide(self.enemyBullets, self.allBlockers, True, True)
 
@@ -608,11 +598,9 @@ class SpaceInvadersEnvironment(object):
                 self.shipAlive = False
 
                 # --- FIX PROIETTILI CONGELATI ---
-                # Non usare .empty(), ma .kill() su ogni proiettile!
                 for bullet in self.enemyBullets:
-                    bullet.kill() # Rimuove sia da enemyBullets che da allSprites
+                    bullet.kill()
 
-                # Puliamo anche i proiettili nostri per pulizia
                 for bullet in self.bullets:
                     bullet.kill()
             else:
@@ -625,7 +613,7 @@ class SpaceInvadersEnvironment(object):
             reward -= 200
             done = True
 
-        # --- MODIFICA: VITTORIA LIVELLO (Progressione Infinita) ---
+        # MODIFICA: VITTORIA LIVELLO
         if not self.enemies:
             # 1. PREMIO ENORME
             reward += 100
@@ -638,17 +626,16 @@ class SpaceInvadersEnvironment(object):
             # Lvl 2: 600ms
             # Lvl 3: 400ms
             # Lvl 4: 200ms
-            # Lvl 5+: 50ms (Schegge impazzite)
+            # Lvl 5+: 50ms
             new_move_time = max(50, 800 - ((self.level -1) * 200))
 
             # 4. POSIZIONE: Scendono di 35px ogni livello (reset ogni 5 livelli)
             self.enemyPosition = ENEMY_DEFAULT_POSITION + (35 * ((self.level - 1) % 5))
 
-            # Se scendono troppo, resettali appena sopra i blocchi per dare una chance minima
             if self.enemyPosition >= 350:
                 self.enemyPosition = 100
 
-            # Rigenera nemici e blocker
+            # Rigenera nemici
             self.make_enemies()
 
             # Applica la nuova velocità
@@ -663,12 +650,12 @@ class SpaceInvadersEnvironment(object):
 
             # Ricrea solo i nemici e i blocker, mantenendo Score e Vite
             self.make_enemies()
-            self.make_blockers() # Opzionale: nel gioco originale i blocker NON si rigenerano
+            self.make_blockers() 
 
             # Aggiorna il gruppo di tutti gli sprite per includere i nuovi nemici
             self.allSprites = pygame.sprite.Group(self.player, self.enemies, self.livesGroup, self.mysteryGroup, self.allBlockers)
 
-            # --- AGGIORNAMENTO SCORE GRAFICO ---
+            # AGGIORNAMENTO SCORE GRAFICO 
             # Qui uniamo il reward (che può essere negativo) al punteggio visivo
         self.score += reward
 
@@ -678,7 +665,7 @@ class SpaceInvadersEnvironment(object):
              row = list(state_now) + [action]
              self.writer.writerow(row)
 
-        # --- 5. RENDER (Opzionale) ---
+        # --- 5. RENDER ---
         if WATCH_MODE:
             SCREEN.blit(self.background, (0, 0))
             self.allSprites.draw(SCREEN)
@@ -699,7 +686,7 @@ class SpaceInvadersEnvironment(object):
 
         return self.get_state(), reward, done
 
-# --- TEST DI FUNZIONAMENTO (Nessun Agente Reale) ---
+# --- TEST DI FUNZIONAMENTO ---
 if __name__ == '_main_':
     # Questo blocco serve solo a testare se l'ambiente non crasha
     env = SpaceInvadersEnvironment(collect_data=False)
