@@ -7,15 +7,21 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+# Risaliamo a: space-invaders-ai/
+project_root = os.path.dirname(current_dir)
+
+# Aggiungiamo la root al path per importare i moduli
+sys.path.append(project_root)
+
+# Definiamo la cartella resources
+resources_dir = os.path.join(project_root, "resources")
 
 # IMPORTIAMO LE FUNZIONI CONDIVISE
-from game_utils import compute_features, get_feature_names
+from utils.game_utils import compute_features, get_feature_names
 
 # --- CONFIGURAZIONE ---
-INPUT_FILE = 'dataset_heuristic.csv'
-MODEL_FILE = 'xgboost_brain.json'
+INPUT_FILE = os.path.join(resources_dir, 'dataset_heuristic.csv')
+MODEL_FILE = os.path.join(resources_dir, 'xgboost_brain.json')
 
 def train_and_evaluate():
     print("--- 1. CARICAMENTO DATI ---")
@@ -89,6 +95,7 @@ def train_and_evaluate():
     print(classification_report(y_test, preds, target_names=['Fermo', 'SX', 'DX', 'Spara']))
 
     # --- 6. SALVATAGGIO ---
+    os.makedirs(resources_dir, exist_ok=True)
     model.save_model(MODEL_FILE)
     print(f"Modello salvato correttamente in: {MODEL_FILE}")
 

@@ -10,16 +10,22 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, classification_report
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+# Risaliamo a: space-invaders-ai/
+project_root = os.path.dirname(current_dir)
+
+# Aggiungiamo la root al path per importare i moduli
+sys.path.append(project_root)
+
+# Definiamo la cartella resources
+resources_dir = os.path.join(project_root, "resources")
 
 # Importiamo le funzioni condivise (FONDAMENTALE)
-from game_utils import compute_features, get_feature_names
+from utils.game_utils import compute_features, get_feature_names
 
 # --- CONFIGURAZIONE ---
-INPUT_FILE = 'dataset_heuristic.csv'
-MODEL_FILE = 'mlp_brain.pkl'
-SCALER_FILE = 'mlp_scaler.pkl'
+INPUT_FILE = os.path.join(resources_dir, 'dataset_heuristic.csv')
+MODEL_FILE = os.path.join(resources_dir, 'mlp_brain.pkl')
+SCALER_FILE = os.path.join(resources_dir, 'mlp_scaler.pkl')
 
 def mlp_train():
     print("--- 1. PREPARAZIONE DATI PER RETE NEURALE ---")
@@ -109,6 +115,7 @@ def mlp_train():
     print(classification_report(y_test, preds, target_names=['Fermo', 'SX', 'DX', 'Spara'], zero_division=0))
     
     # 4. Salvataggio
+    os.makedirs(resources_dir, exist_ok=True)
     joblib.dump(mlp, MODEL_FILE)
     joblib.dump(scaler, SCALER_FILE)
     print(f"\nSalvati: {MODEL_FILE} e {SCALER_FILE}")

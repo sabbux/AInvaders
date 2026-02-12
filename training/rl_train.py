@@ -4,7 +4,7 @@ import sys
 from stable_baselines3 import PPO
 from stable_baselines3.common.callbacks import CheckpointCallback
 from stable_baselines3.common.vec_env import DummyVecEnv, VecFrameStack
-from stable_baselines3.common.monitor import Monitor  # <--- IMPORTANTE: Il "Registratore"
+from stable_baselines3.common.monitor import Monitor 
 
 # --- 1. SETUP PERCORSI ---
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -12,7 +12,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 project_root = os.path.dirname(current_dir)
 sys.path.append(project_root)
 
-from gym_env import SpaceInvadersGym
+from environment.gym_env import SpaceInvadersGym
 
 # --- 2. CONFIGURAZIONE CARTELLE ---
 agents_dir = os.path.join(project_root, "agents")

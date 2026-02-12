@@ -7,18 +7,19 @@ import pygame
 
 # Setup path per trovare environment e utils
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+project_root = os.path.dirname(current_dir)
+sys.path.append(project_root)
+resources_dir = os.path.join(project_root, "resources")
 
-from spaceinvaders import SpaceInvadersEnvironment
+from environment.spaceinvaders import SpaceInvadersEnvironment
 # IMPORTA LA LOGICA CONDIVISA
-from game_utils import compute_features, get_feature_names
+from utils.game_utils import compute_features, get_feature_names
 
 # Configurazione Modello
-MODEL_FILE = "xgboost_brain.json"
+MODEL_FILE = os.path.join(resources_dir, "xgboost_brain.json")
 
 if not os.path.exists(MODEL_FILE):
-    print(f"ERRORE: Non trovo il file {MODEL_FILE}. Esegui prima train_modular.py!")
+    print(f"ERRORE: Non trovo il file {MODEL_FILE}. Esegui prima xgboost_train.py!")
     sys.exit()
 
 # Carica il modello una volta sola all'avvio
@@ -62,7 +63,7 @@ def run_ai_player():
     env = SpaceInvadersEnvironment(collect_data=False)
     
     # Assicurati che in environment.py WATCH_MODE sia True per vedere la partita!
-    print("--- AVVIO AGENTE AI (Premi CTRL+C per uscire) ---")
+    print("--- AVVIO AGENTE XGBOOST (Premi CTRL+C per uscire) ---")
     
     episodes = 5 # Quante partite vuoi vedere
     

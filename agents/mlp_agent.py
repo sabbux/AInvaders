@@ -7,15 +7,16 @@ import time
 
 # Setup path
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
+project_root = os.path.dirname(current_dir)
+sys.path.append(project_root)
+resources_dir = os.path.join(project_root, "resources")
 
-from spaceinvaders import SpaceInvadersEnvironment
-from game_utils import compute_features, get_feature_names
+from environment.spaceinvaders import SpaceInvadersEnvironment
+from utils.game_utils import compute_features, get_feature_names
 
 # CONFIGURAZIONE
-MODEL_FILE = 'mlp_brain.pkl'
-SCALER_FILE = 'mlp_scaler.pkl'
+MODEL_FILE = os.path.join(resources_dir, 'mlp_brain.pkl')
+SCALER_FILE = os.path.join(resources_dir, 'mlp_scaler.pkl')
 
 def run_mlp_agent():
     # Caricamento Modello e Scaler

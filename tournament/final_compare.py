@@ -8,18 +8,19 @@ import xgboost as xgb
 from collections import deque  # <--- Serve per la memoria dei 4 frame
 from stable_baselines3 import PPO
 
-
-from spaceinvaders import SpaceInvadersEnvironment
-from game_utils import compute_features, get_feature_names
-
-# --- CONFIGURAZIONE PERCORSI ---
 current_dir = os.path.dirname(os.path.abspath(__file__))
-agents_dir = os.path.join(current_dir, "agents")
+project_root = os.path.dirname(current_dir)
+sys.path.append(project_root)
+resources_dir = os.path.join(project_root, "resources")
+agents_dir = os.path.join(project_root, "agents")
+
+from environment.spaceinvaders import SpaceInvadersEnvironment
+from utils.game_utils import compute_features, get_feature_names
 
 # FILE
-XGB_FILE = os.path.join(current_dir, "xgboost_brain.json")
-MLP_FILE = os.path.join(current_dir, "mlp_brain.pkl")
-SCALER_FILE = os.path.join(current_dir, "mlp_scaler.pkl")
+XGB_FILE = os.path.join(resources_dir, "xgboost_brain.json")
+MLP_FILE = os.path.join(resources_dir, "mlp_brain.pkl")
+SCALER_FILE = os.path.join(resources_dir, "mlp_scaler.pkl")
 # Nota: Cerca il file con "_stacked"
 PPO_FILE = os.path.join(agents_dir, "ppo_space_invaders_stacked.zip")
 

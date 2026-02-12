@@ -3,17 +3,16 @@ import numpy as np
 import sys
 import os
 
-# --- AGGIUNTA PER TROVARE IL MODULO ---
 current_dir = os.path.dirname(os.path.abspath(__file__))
-parent_dir = os.path.dirname(current_dir)
-sys.path.append(parent_dir)
-# --------------------------------------
+project_root = os.path.dirname(current_dir)
+sys.path.append(project_root)
+resources_dir = os.path.join(project_root, "resources")
+OUTPUT_FILE = os.path.join(resources_dir, 'dataset_heuristic.csv')
 
-from spaceinvaders import SpaceInvadersEnvironment
+from environment.spaceinvaders import SpaceInvadersEnvironment
 
 # --- CONFIGURAZIONE ---
 EPISODES = 100
-OUTPUT_FILE = 'dataset_heuristic.csv'
 
 class HeuristicAgent:
     def __init__(self):
@@ -74,6 +73,8 @@ def run_data_collection():
     agent = HeuristicAgent()
 
     print(f"--- INIZIO RACCOLTA SMART (33% Caos) ---")
+
+    os.makedirs(resources_dir, exist_ok=True)
 
     final_levels = []
     final_scores = []

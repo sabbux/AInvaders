@@ -10,14 +10,18 @@ import math
 import csv
 import numpy as np
 from pygame.locals import *
-from os.path import abspath, dirname
+from os.path import abspath, dirname, join
 from random import choice, randint
 
-# --- CONFIGURAZIONE ---
-BASE_PATH = abspath(dirname(__file__))
-FONT_PATH = BASE_PATH + '/fonts/'
-IMAGE_PATH = BASE_PATH + '/images/'
-SOUND_PATH = BASE_PATH + '/sounds/'
+# --- CONFIGURAZIONE PERCORSI ROBUSTA ---
+current_dir = dirname(abspath(__file__))
+PROJECT_ROOT = dirname(current_dir)
+
+# Definisci i percorsi degli asset relativi alla ROOT
+FONT_PATH = join(PROJECT_ROOT, 'fonts/')
+IMAGE_PATH = join(PROJECT_ROOT, 'images/')
+SOUND_PATH = join(PROJECT_ROOT, 'sounds/')
+DATASET_PATH = join(PROJECT_ROOT, 'resources', 'dataset_heuristic.csv')
 
 # Configurazione Visualizzazione
 WATCH_MODE = True     # True: Vedi il gioco. False: Training veloce (schermo nero).
