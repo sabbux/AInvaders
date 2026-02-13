@@ -53,7 +53,7 @@ Il repository è organizzato in modo modulare per separare l'ambiente di gioco, 
 
 ## 🚀 Installazione
 
-Per replicare gli esperimenti, è consigliato utilizzare un ambiente virtuale Python (la versione usata durante lo sviluppo di questo progetto è la versione 3.9.11)
+Per replicare gli esperimenti, è consigliato utilizzare un ambiente virtuale Python (la versione usata durante lo sviluppo di questo progetto è la versione 3.11.9)
 
 1. **Clona la repository**
 ```bash
